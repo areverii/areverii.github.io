@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problem 5</title>
+</head>
+<body>
+    <script>
+        function times_table(number) {
+            var times_table_str = "";
+            if (isNaN(number)) {
+                return null;
+            } else {
+                for (var i = 0; i <= 12; i++) {
+                    times_table_str += number + " x " + i + " = " + number * i + "<br>";
+                }
+                return times_table_str;
+            }
+        }
+        document.write(times_table(3) + "<br>");
+        document.write(times_table(7) + "<br>");
+        document.write(times_table(11));
+    </script>
+</body>
+</html>

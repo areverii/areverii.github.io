@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problem 5</title>
+</head>
+<body>
+    <div id="result"></div>
+    <script>
+        function count(numbers, value) {
+            var count = 0;
+
+            if (!Array.isArray(numbers) || isNaN(value)) {
+                return null;
+            }
+            numbers.forEach(function(number) {
+                if (number < value) {
+                    count++;
+                }
+            });
+            return count;
+        }
+
+        function test_count() {
+            var array = [1, 2, 4, 2, 6, 7, 8];
+            var value = 4;
+            var count_result = count(array, value);
+            document.getElementById('result').innerHTML = "entered array: " + array + "<br>";
+            if (count_result) {
+                document.getElementById('result').innerHTML += count_result + " elements in the array are less than " + value + ".";
+            } else {
+                document.getElementById('result').innerHTML = "received invalid input.";
+            }
+        }
+
+        test_count();
+    </script>
+</body>
+</html>

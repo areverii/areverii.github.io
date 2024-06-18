@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problem 4</title>
+</head>
+<body>
+    <script>
+        var min = parseInt(prompt("Enter the minimum number of the range:"));
+        var max = parseInt(prompt("Enter the maximum number of the range:"));
+        var sum = 0;
+        document.write("odd numbers:" + "<br>");
+        
+        for (var i = min; i <= max; i++) {
+            if (i % 2 != 0) {
+                document.write(i + "<br>");
+            }
+            sum += i;
+        }
+        document.write("the sum of all numbers in the range is: " + sum);
+    </script>
+</body>
+</html>
