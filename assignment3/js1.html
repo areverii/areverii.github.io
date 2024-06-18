@@ -19,8 +19,8 @@
         }
         
         var num_children = prompt("How many children do you have?");
-        if (num_children === null || isNaN(num_children)) {
-            document.write("You did not enter a number.");
+        if (num_children === null || Number.isNaN(num_children)) {
+            document.write("You did not enter a valid number.");
         } else {
             switch(num_children) {
                 case "0":
