@@ -19,7 +19,11 @@
         }
         
         var num_children = prompt("How many children do you have?");
-        if (num_children === null || Number.isNaN(num_children)) {
+        if (num_children !== null) {
+            num_children = num_children.trim();
+        }
+
+        if (num_children === null || num_children === "" || isNaN(num_children)) {
             document.write("You did not enter a valid number.");
         } else {
             switch(num_children) {
