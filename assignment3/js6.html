@@ -12,6 +12,7 @@
             if (!Array.isArray(numbers) || isNaN(value)) {
                 return null;
             }
+            // I used a foreach here since we are iterating over every element
             numbers.forEach(function(number) {
                 if (number < value) {
                     count++;

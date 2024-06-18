@@ -9,8 +9,10 @@
         var last_name = prompt("Enter your last name:");
 
         // here I chose to validate that the name is a non-empty string, which was not a requirement
-        // but I wanted to include it just in case. 
-        if (typeof first_name !== 'string' || typeof last_name !== 'string' || !first_name || !last_name) {
+        // but I wanted to include it just in case. I figured out I could use .trim() which will handle cases
+        // where the user just inputs some amount of whitespace.
+        // numbers, symbols, etc are all still allowed because they are valid strings.
+        if (!first_name.trim() || !last_name.trim()) {
             alert("Either the first or last name was not entered.");
         } else {
             alert("Your name is: " + first_name + " " + last_name);
