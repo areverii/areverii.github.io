@@ -8,7 +8,7 @@
     <script>
         function times_table(number) {
             var times_table_str = "";
-            if (Number.isNaN(number)) {
+            if (number === null) {
                 return null;
             } else {
                 for (var i = 0; i <= 12; i++) {

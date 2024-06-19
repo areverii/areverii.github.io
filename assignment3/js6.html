@@ -10,7 +10,7 @@
         function count(numbers, value) {
             var count = 0;
 
-            if (!Array.isArray(numbers) || Number.isNaN(value)) {
+            if (!Array.isArray(numbers) || value === null) {
                 return null;
             }
             // I used a foreach here since we are iterating over every element
