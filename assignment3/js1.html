@@ -19,9 +19,9 @@
             alert("Your name is: " + first_name + " " + last_name);
         }
         
-        var num_children = prompt("How many children do you have?");
+        var num_children = prompt("How many children do you have?").trim();
 
-        if (num_children === null || num_children === " " || num_children === "" || Number.isNaN(num_children)) {
+        if (num_children === null || num_children === "" || Number.isNaN(num_children)) {
             document.write("You did not enter a valid number of children.");
         } else {
             switch(num_children) {
