@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problem 2</title>
+</head>
+<body>
+    <!-- Create a string with several names separated by a comma - for example,  "Pat, Chris, Marlon, Ferncroft, Assunta"
+        Using ONLY string or array methods,  display the names as a numbered list.  You may NOT use a for or a while loop.
+        Hint1:  first turn the string into an array
+        Hint2: Think about the repetitive part of a list - ie, <li>anb</li>
+        Hint3: Think about methods of the array object that iterate through the array
+    -->
+    <script>
+        let names = "Fern, Eve, Anna, May, Yulia";
+        names = names.split(', ');
+        let list = names.map((name) => `<li>${name}</li>`).join('');
+        document.write(`<ol>${list}</ol>`);
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problem 5</title>
+    <style>
+        .spacing {
+            margin-bottom: 20px;
+        }
+        .state-item {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Create a <select> element as a list (not a dropdown element- hint, set the size attribute of the <select> ).
+        The <select> should display a list of at least 10 states - use Javascript to create the <option> elements using an array of the states. By default, the first item should be selected.
+        Adjacent to the <select> list is a button labeled "Add State"
+        Below the list is a div with a border and a button labeled "Clear States"
+        When the user clicks "Add State", the selected state in the list should appear below in the div.  The user may continue to add more states to the list in the div
+        When the user clicks "Clear States" the div should be emptied
+    -->
+    <select id="select_element" size="10"></select>
+    <button type="button" id="add_state_button" name="add_state_button" class="spacing">Add State</button>
+    <div id="state_list_div" name="state_list_div" class="spacing" style="border: 1px solid black;"></div>
+    <button type="button" id="clear_states_button" name="clear_states_button" class="spacing">Clear States</button>
+    <script>
+        window.onload = function() {
+            let select_element = document.getElementById('select_element');
+            let add_state_button = document.getElementById('add_state_button');
+            let state_list_div = document.getElementById('state_list_div');
+            let clear_states_button = document.getElementById('clear_states_button');
+
+            let states = ["Colorado", "Massachusetts", "Georgia", "Delaware", "New York", "California", "Texas", "Ohio", "Idaho", "Washington"];
+
+            for (let i = 0; i < states.length; i++) {
+                let state_element = document.createElement('option');
+                state_element.value = states[i];
+                state_element.text = states[i];
+                select_element.appendChild(state_element);
+            }
+
+            add_state_button.onclick = function() {
+                let selected = select_element.options[select_element.selectedIndex].text;
+                let state_item = document.createElement('div');
+                state_item.className = 'state-item';
+                state_item.innerText = selected;
+                state_list_div.appendChild(state_item);
+            }
+
+            clear_states_button.onclick = function() {
+                state_list_div.innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>
