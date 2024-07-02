@@ -8,7 +8,7 @@
 
     <form id="genre-form">
         <select id="genre-select"></select>
-        <button type="submit">Filter</button>
+        <button type="submit">filter by genre</button>
     </form>
     <div id="song-list"></div>
 
@@ -18,13 +18,13 @@
         $.get("songs.json", function(data) {
             var songs = data;
 
-            var genres = [...new Set(songs.map(song => song.genre))];
+            var genres = [...new Set(songs.map(song => song.genres))];
             $('#genre-select').html(genres.map(genre => `<option value="${genre}">${genre}</option>`).join(''));
 
             $('#genre-form').on('submit', function(e) {
-                e.preventDefault(); // need this to stop the page from reloading whenever we click submit
+                e.preventDefault();
                 var selectedGenre = $('#genre-select').val();
-                var filteredSongs = songs.filter(song => song.genre === selectedGenre);
+                var filteredSongs = songs.filter(song => song.genres === selectedGenre);
                 $('#song-list').html(filteredSongs.map(song => `<p>${song.title}</p>`).join(''));
             });
         });
