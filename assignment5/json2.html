@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>json 2</title>
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function(){
+
+        $.get("songs.json", function(data) {
+            var songs = data;
+
+            var div = document.createElement('div');
+
+            songs.forEach(function(song) {
+                var song_element = document.createElement('p');
+                
+                song_element.innerHTML = `<strong>${song.title}</strong><br>
+                                      Artist: ${song.artist}<br>
+                                      Genre: ${song.genres.join(', ')}<br>
+                                      Released ${song.year}`;
+
+                div.appendChild(song_element);
+            });
+
+            document.body.appendChild(div);
+        });
+    });
+    </script>
+</body>
+</html>

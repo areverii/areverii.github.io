@@ -1,0 +1,62 @@
+[
+    {
+        "title": "Asleep Among Endives",
+        "artist": "Ichiko Aoba",
+        "year": 2023,
+        "genres": ["Alternative/Indie"]
+    },
+    {
+        "title": "girlfriend",
+        "artist": "Hemlocke Springs",
+        "year": 2023,
+        "genres": ["Synthpop"]
+    },
+    {
+        "title": "Winter Bird",
+        "artist": "Aurora",
+        "year": 2014,
+        "genres": ["Alternative/Indie", "Pop"]
+    },
+    {
+        "title": "Hello My Old Heart",
+        "artist": "The Oh Hellos",
+        "year": 2011,
+        "genres": ["French Indie", "Folk"]
+    },
+    {
+        "title": "Mirage",
+        "artist": "Orion Sun",
+        "year": 2017,
+        "genres": ["R&B", "Soul"]
+    },
+    {
+        "title": "up and down",
+        "artist": "Judy Singh",
+        "year": 1970,
+        "genres": ["Jazz", "Latin", "Pop"]
+    },
+    {
+        "title": "CHIHIRO",
+        "artist": "Billie Eilish",
+        "year": 2024,
+        "genres": ["Pop", "Alternative/Indie"]
+    },
+    {
+        "title": "HOT TO GO!",
+        "artist": "Chapelle Roan",
+        "year": 2023,
+        "genres": ["Alternative/Indie", "Pop"]
+    },
+    {
+        "title": "Intervallo II",
+        "artist": "Ennio Morricone",
+        "year": 1973,
+        "genres": ["Instrumental"]
+    },
+    {
+        "title": "glow worms",
+        "artist": "Ivri, Naveih",
+        "year": 2020,
+        "genres": ["Alternative/Indie"]
+    }
+]
