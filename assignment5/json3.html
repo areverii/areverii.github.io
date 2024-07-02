@@ -14,17 +14,16 @@
 
     <script>
     $(document).ready(function(){
-
         $.get("songs.json", function(data) {
             var songs = data;
 
-            var genres = [...new Set(songs.map(song => song.genres))];
+            var genres = [...new Set(songs.flatMap(song => song.genres))];
             $('#genre-select').html(genres.map(genre => `<option value="${genre}">${genre}</option>`).join(''));
 
             $('#genre-form').on('submit', function(e) {
                 e.preventDefault();
                 var selectedGenre = $('#genre-select').val();
-                var filteredSongs = songs.filter(song => song.genres === selectedGenre);
+                var filteredSongs = songs.filter(song => song.genres.includes(selectedGenre));
                 $('#song-list').html(filteredSongs.map(song => `<p>${song.title}</p>`).join(''));
             });
         });
