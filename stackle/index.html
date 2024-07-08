@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Import maps polyfill (With latest Chrome or Firefox, you do not need this anymore) -->
+    <!-- Import maps polyfill (With latest Chrome or Firefox, you don not need this anymore ) -->
     <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
 
     <script type="importmap">
@@ -21,21 +21,27 @@
     <script type="module" src="stackle.js"></script>
 
     <div id="notification-container"></div>
+
     <div id="endgame-popup" class="popup">
-        <p id="endgame-message"></p>
-        <p id="word-list"></p>
-        <button id="restart-button">Restart</button>
+        <div id="endgame-message" class="popup-message"></div>
+        <div id="word-list" class="popup-message"></div>
+        <button id="restart-button" class="popup-button">Restart</button>
     </div>
+
     <div id="welcome-popup" class="popup">
-        <p>Welcome to Stackle!</p>
-        <p>Here are the rules of the game...</p>
-        <button id="start-button">Start Playing</button>
+        <div class="popup-message">Welcome to Stackle! The rules are simple. Try to guess the words on each side of the cube. Each guess must be a valid 5-letter word. The color of the tiles will change to show how close your guess was to the word. You have 5 attempts per side. Good luck!</div>
+        <button id="start-button" class="popup-button">Start Game</button>
     </div>
+
     <div id="rules-popup" class="popup">
-        <p>Rules of Stackle</p>
-        <p>Here are the rules of the game...</p>
-        <button id="close-rules-button">Close</button>
+        <div class="popup-message">Stackle Rules: Guess the 5-letter words on each side of the cube. The color of the tiles will indicate how close your guess was. You have 5 attempts per side. Good luck!</div>
+        <button id="close-rules-button" class="popup-button">Close</button>
     </div>
-    <div id="help-icon">?</div>
+
+    <img id="logo" src="logo.png" alt="Stackle Logo">
+
+    <div id="help-icon">
+        <img src="help.png" alt="Help">
+    </div>
 </body>
 </html>

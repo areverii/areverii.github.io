@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 let scene, camera, renderer, controls;
-const words = ["STACK", "KITES", "SOURS", "SPURS"]; // Different words for each face, corners shared
+let words = ["STACK", "KITES", "SOURS", "SPURS"]; // Placeholder, will be set dynamically
 const gridSize = 5;
 const maxGuesses = 5;
 const cubeSize = 5;
@@ -45,9 +45,43 @@ function init() {
 
     window.addEventListener('keydown', onKeyDown, false);
 
-    createCube();
+    fetch('words.json')
+        .then(response => response.json())
+        .then(data => {
+            words = chooseWords(data);
+            console.log('Chosen words:', words); // Debugging
+            createCube();
+            showWelcomePopup();
+        });
+}
 
-    showWelcomePopup();
+function chooseWords(wordList) {
+    // Filter the word list to only include 5-letter words
+    wordList = wordList.filter(word => word.length === 5);
+
+    while (true) {
+        const chosenWords = [];
+        const startWord = wordList[Math.floor(Math.random() * wordList.length)];
+        chosenWords.push(startWord);
+
+        let currentWord = startWord;
+
+        for (let i = 0; i < 3; i++) {
+            const nextWord = wordList.find(word =>
+                word.startsWith(currentWord[currentWord.length - 1]) &&
+                !chosenWords.includes(word)
+            );
+
+            if (!nextWord) break;
+
+            chosenWords.push(nextWord);
+            currentWord = nextWord;
+        }
+
+        if (chosenWords.length === 4 && chosenWords[3].endsWith(chosenWords[0][0])) {
+            return chosenWords;
+        }
+    }
 }
 
 function createCube() {
@@ -210,7 +244,6 @@ async function checkGuess() {
 
     // Ensure the current row is fully filled before allowing submission
     if (!isRowFilled(currentFaceIndex, guessRow)) {
-        showNotification('Please fill the entire row before submitting.');
         return;
     }
 
@@ -219,35 +252,36 @@ async function checkGuess() {
         guess.push(cube[currentFaceIndex][guessRow][j].text.userData.text);
     }
 
-    const isValid = await isValidWord(guess.join(''));
+    const isValid = await isValidWord(guess.join('').toLowerCase()); // Convert guess to lowercase
     if (!isValid) {
         showNotification('Not in word list');
         return;
     }
 
     const word = words[currentFaceIndex];
+    console.log("checking guess", guess.join(''), "against", word); // Debugging
     const wordCounts = getCounts(word);
     const guessCounts = getCounts(guess.join(''));
 
     // First pass for correct letters
     for (let j = 0; j < gridSize; j++) {
         const letter = guess[j];
-        if (letter === word[j]) {
+        if (letter.toLowerCase() === word[j]) {
             updateBoxColor(currentFaceIndex, guessRow, j, 'correct');
             updateCornerBoxColor(currentFaceIndex, guessRow, j, 'correct');
-            wordCounts[letter]--;
-            guessCounts[letter]--;
+            wordCounts[letter.toLowerCase()]--;
+            guessCounts[letter.toLowerCase()]--;
         }
     }
 
     // Second pass for present and absent letters
     for (let j = 0; j < gridSize; j++) {
         const letter = guess[j];
-        if (letter !== word[j]) {
-            if (wordCounts[letter] > 0) {
+        if (letter.toLowerCase() !== word[j]) {
+            if (wordCounts[letter.toLowerCase()] > 0) {
                 updateBoxColor(currentFaceIndex, guessRow, j, 'present');
                 updateCornerBoxColor(currentFaceIndex, guessRow, j, 'present');
-                wordCounts[letter]--;
+                wordCounts[letter.toLowerCase()]--;
             } else {
                 updateBoxColor(currentFaceIndex, guessRow, j, 'absent');
                 updateCornerBoxColor(currentFaceIndex, guessRow, j, 'absent');
@@ -260,7 +294,7 @@ async function checkGuess() {
         if (cube[currentFaceIndex][guessRow][j].box.material[4].color.equals(faceMaterials.absent.color)) {
             const letter = guess[j];
             for (let k = 0; k < 4; k++) {
-                if (k !== currentFaceIndex && words[k].includes(letter)) {
+                if (k !== currentFaceIndex && words[k].includes(letter.toLowerCase())) {
                     updateBoxColor(currentFaceIndex, guessRow, j, 'otherWord');
                     updateCornerBoxColor(currentFaceIndex, guessRow, j, 'otherWord');
                     break;
@@ -269,7 +303,7 @@ async function checkGuess() {
         }
     }
 
-    if (guess.join('') === word) {
+    if (guess.join('').toLowerCase() === word) {
         completedFaces[currentFaceIndex] = true;
     }
     currentGuesses[currentFaceIndex]++;
@@ -281,7 +315,7 @@ async function checkGuess() {
 
     // Check for win/loss conditions
     if (checkLossCondition()) {
-        showEndgamePopup('You lose! The words were:', words);
+        showEndgamePopup('You lose! The words were:', words.map(word => word.toUpperCase()));
         return;
     }
 
@@ -469,6 +503,15 @@ function restartGame() {
     // Hide the endgame popup
     const popup = document.getElementById('endgame-popup');
     popup.style.display = 'none';
+
+    // Re-fetch words and set up the game again
+    fetch('words.json')
+        .then(response => response.json())
+        .then(data => {
+            words = chooseWords(data);
+            console.log('Chosen words:', words); // Debugging
+            createCube();
+        });
 }
 
 function setCookie(name, value, days) {

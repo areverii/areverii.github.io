@@ -196,9 +196,7 @@ function checkGuess() {
     for (let j = 0; j < gridSize; j++) {
         guess.push(cube[currentFaceIndex][guessRow][j].text.userData.text);
     }
-
-    console.log(`Guess for face ${currentFaceIndex}: ${guess.join('')}`);
-
+    
     const wordCounts = getCounts(word);
     const guessCounts = getCounts(guess.join(''));
 
