@@ -13,10 +13,10 @@ const currentGuesses = Array(4).fill(0); // Track current guess row for each fac
 
 const faceMaterials = {
     default: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 }),
-    correct: new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 1 }),
-    present: new THREE.MeshBasicMaterial({ color: 0xffff00, transparent: true, opacity: 1 }),
-    absent: new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 }),
-    otherWord: new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 }),
+    correct: new THREE.MeshBasicMaterial({ color: 0x5ECF85, transparent: true, opacity: 1 }),
+    present: new THREE.MeshBasicMaterial({ color: 0xFFF9C4, transparent: true, opacity: 1 }),
+    absent: new THREE.MeshBasicMaterial({ color: 0xD3D3D3, transparent: true, opacity: 1 }),
+    otherWord: new THREE.MeshBasicMaterial({ color: 0xD1A3FF, transparent: true, opacity: 1 }),
     solidWhite: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 1 }) // For non-color changing faces
 };
 
@@ -38,9 +38,16 @@ function init() {
 
     camera.position.z = 10;
 
+    document.getElementById('restart-button').addEventListener('click', restartGame);
+    document.getElementById('start-button').addEventListener('click', startGame);
+    document.getElementById('close-rules-button').addEventListener('click', closeRulesPopup);
+    document.getElementById('help-icon').addEventListener('click', showRulesPopup);
+
     window.addEventListener('keydown', onKeyDown, false);
 
     createCube();
+
+    showWelcomePopup();
 }
 
 function createCube() {
@@ -145,7 +152,6 @@ function placeLetter(letter) {
     }
 }
 
-
 function removeLetter() {
     const currentFaceIndex = getCurrentFaceIndex();
     const guessRow = currentGuesses[currentFaceIndex];
@@ -161,8 +167,6 @@ function removeLetter() {
         }
     }
 }
-
-
 
 function updateSharedCorners(faceIndex, row, col, letter) {
     if (col === 0) {
@@ -184,8 +188,6 @@ function updateSharedCorners(faceIndex, row, col, letter) {
     }
 }
 
-
-
 function updateSharedCornerVisibility(faceIndex, row, col, visible) {
     if (col === 0) {
         const leftFaceIndex = (faceIndex + 3) % 4; // Face to the left
@@ -202,14 +204,13 @@ function updateSharedCornerVisibility(faceIndex, row, col, visible) {
     }
 }
 
-
-
 async function checkGuess() {
     const currentFaceIndex = getCurrentFaceIndex();
     const guessRow = currentGuesses[currentFaceIndex];
 
     // Ensure the current row is fully filled before allowing submission
     if (!isRowFilled(currentFaceIndex, guessRow)) {
+        showNotification('Please fill the entire row before submitting.');
         return;
     }
 
@@ -220,7 +221,7 @@ async function checkGuess() {
 
     const isValid = await isValidWord(guess.join(''));
     if (!isValid) {
-        alert('Invalid word!');
+        showNotification('Not in word list');
         return;
     }
 
@@ -280,12 +281,12 @@ async function checkGuess() {
 
     // Check for win/loss conditions
     if (checkLossCondition()) {
-        alert('You lose!');
+        showEndgamePopup('You lose! The words were:', words);
         return;
     }
 
     if (checkWinCondition()) {
-        alert('You win!');
+        showEndgamePopup('Congratulations! You win!', []);
         return;
     }
 
@@ -386,6 +387,107 @@ function getCurrentFaceIndex() {
     return (index + 4) % 4; // Ensure positive face index
 }
 
+function showNotification(message) {
+    // Remove any existing notifications first
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    const container = document.getElementById('notification-container');
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+
+    container.appendChild(notification);
+
+    // Show the notification
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+
+    // Hide and remove the notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        notification.classList.add('hide');
+        notification.addEventListener('transitionend', () => {
+            notification.remove();
+        });
+    }, 3000);
+}
+
+function showEndgamePopup(message, wordList) {
+    const popup = document.getElementById('endgame-popup');
+    const messageElement = document.getElementById('endgame-message');
+    const wordListElement = document.getElementById('word-list');
+
+    messageElement.textContent = message;
+    wordListElement.textContent = wordList.length ? `${wordList.join(', ')}` : '';
+
+    popup.style.display = 'block';
+}
+
+function showWelcomePopup() {
+    if (!getCookie('seenWelcome')) {
+        const popup = document.getElementById('welcome-popup');
+        popup.style.display = 'block';
+    }
+}
+
+function showRulesPopup() {
+    const popup = document.getElementById('rules-popup');
+    popup.style.display = 'block';
+}
+
+function closeRulesPopup() {
+    const popup = document.getElementById('rules-popup');
+    popup.style.display = 'none';
+}
+
+function startGame() {
+    const popup = document.getElementById('welcome-popup');
+    popup.style.display = 'none';
+    setCookie('seenWelcome', 'true', 365);
+}
+
+function restartGame() {
+    // Reset game state
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            for (let k = 0; k < gridSize; k++) {
+                const { text, box } = cube[i][j][k];
+                updateTextMesh(text, "");
+                box.material[4] = faceMaterials.default.clone(); // Reset the front face
+                box.material[4].opacity = 0; // Make the front face of the box invisible
+                guessPositions[i][j][k] = { filled: false, locked: false };
+            }
+        }
+        completedFaces[i] = false;
+        currentGuesses[i] = 0;
+    }
+
+    // Hide the endgame popup
+    const popup = document.getElementById('endgame-popup');
+    popup.style.display = 'none';
+}
+
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
 
 function animate() {
     requestAnimationFrame(animate);

@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Stackle</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Import maps polyfill (With latest Chrome or Firefox, you don not need this anymore ) -->
+    <!-- Import maps polyfill (With latest Chrome or Firefox, you do not need this anymore) -->
     <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
 
     <script type="importmap">
@@ -23,6 +20,22 @@
 
     <script type="module" src="stackle.js"></script>
 
-    
+    <div id="notification-container"></div>
+    <div id="endgame-popup" class="popup">
+        <p id="endgame-message"></p>
+        <p id="word-list"></p>
+        <button id="restart-button">Restart</button>
+    </div>
+    <div id="welcome-popup" class="popup">
+        <p>Welcome to Stackle!</p>
+        <p>Here are the rules of the game...</p>
+        <button id="start-button">Start Playing</button>
+    </div>
+    <div id="rules-popup" class="popup">
+        <p>Rules of Stackle</p>
+        <p>Here are the rules of the game...</p>
+        <button id="close-rules-button">Close</button>
+    </div>
+    <div id="help-icon">?</div>
 </body>
 </html>
