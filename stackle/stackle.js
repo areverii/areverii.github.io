@@ -46,7 +46,7 @@ function init() {
         });
 }
 
-function chooseWords(wordList) {
+const chooseWords = (wordList) => {
     // Filter the word list to only include 5-letter words
     wordList = wordList.filter(word => word.length === 5);
 
@@ -107,7 +107,6 @@ function createCube() {
     });
 }
 
-
 function createBox() {
     const textureLoader = new THREE.TextureLoader();
     const hollowSquareTexture = textureLoader.load('absent_square.png');
@@ -116,7 +115,6 @@ function createBox() {
     const mesh = new THREE.Mesh(geometry, material);
     return mesh;
 }
-
 
 function createTextMesh(text) {
     const canvas = document.createElement('canvas');
@@ -190,7 +188,6 @@ function removeLetter() {
         }
     }
 }
-
 
 function updateSharedCorners(faceIndex, row, col, letter) {
     if (col === 0) {
@@ -330,7 +327,6 @@ async function checkGuess() {
     }
 }
 
-
 async function isValidWord(word) {
     try {
         const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
@@ -344,9 +340,9 @@ async function isValidWord(word) {
 
 function getCounts(word) {
     const counts = {};
-    for (const letter of word) {
-        counts[letter] = counts[letter] ? counts[letter] + 1 : 1;
-    }
+    word.split('').forEach(letter => {
+        counts[letter] = (counts[letter] || 0) + 1;
+    });
     return counts;
 }
 
