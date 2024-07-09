@@ -6,6 +6,65 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="notification-container"></div>
+
+    <div id="endgame-popup" class="popup">
+        <div id="endgame-message" class="popup-message"></div>
+        <div id="word-list" class="popup-message"></div>
+        <button id="restart-button" class="popup-button">Restart</button>
+    </div>
+
+    <div id="welcome-popup" class="popup">
+        <div class="popup-header">
+            <h2>Welcome to Stackle!</h2>
+            <button id="close-welcome-button" class="popup-close">&times;</button>
+        </div>
+        <div class="popup-content">
+            <p>Guess the word for each of the 4 faces of the Stackle.</p>
+            <ul>
+                <li>Each guess must be a 5-letter word.</li>
+                <li>The first and last letter of each word wraps to adjacent faces, so guess wisely!</li>
+                <li>The color of the tiles will reflect how close your guess was to a word.</li>
+            </ul>
+            <h3>Colors</h3>
+            <div class="examples">
+                <p><span class="example-tile correct">W</span>EARY - <strong>W</strong> is in the word and in the correct spot.</p>
+                <p><span class="example-tile present">I</span>ILLS - <strong>I</strong> is in the word but in the wrong spot.</p>
+                <p><span class="example-tile otherWord">V</span>AGUE - <strong>U</strong> is in the word of a different face.</p>
+                <p><span class="example-tile absent">G</span>UESS - <strong>G</strong> is not in the word in any spot.</p>
+            </div>
+            <button id="start-button" class="popup-button">Start Game</button>
+        </div>
+    </div>
+
+    <div id="rules-popup" class="popup">
+        <div class="popup-header">
+            <h2>How To Play</h2>
+            <button id="close-rules-button" class="popup-close">&times;</button>
+        </div>
+        <div class="popup-content">
+            <p>Guess the word for each of the 4 faces of the Stackle.</p>
+            <ul>
+                <li>Each guess must be a 5-letter word.</li>
+                <li>The first and last letter of each word wraps to adjacent faces, so guess wisely!</li>
+                <li>The color of the tiles will reflect how close your guess was to a word.</li>
+            </ul>
+            <h3>Colors</h3>
+            <div class="examples">
+                <p><span class="example-tile correct">W</span>EARY - <strong>W</strong> is in the word and in the correct spot.</p>
+                <p><span class="example-tile present">I</span>ILLS - <strong>I</strong> is in the word but in the wrong spot.</p>
+                <p><span class="example-tile otherWord">V</span>AGUE - <strong>U</strong> is in the word of a different face.</p>
+                <p><span class="example-tile absent">G</span>UESS - <strong>G</strong> is not in the word in any spot.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="logo">stackle</div>
+
+    <div id="help-icon">
+        <span>?</span>
+    </div>
+
     <!-- Import maps polyfill (With latest Chrome or Firefox, you don not need this anymore ) -->
     <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
 
@@ -19,30 +78,5 @@
     </script>
 
     <script type="module" src="stackle.js"></script>
-
-    <div id="notification-container"></div>
-
-    <div id="endgame-popup" class="popup">
-        <div id="endgame-message" class="popup-message"></div>
-        <div id="word-list" class="popup-message"></div>
-        <button id="restart-button" class="popup-button">Restart</button>
-    </div>
-
-    <div id="welcome-popup" class="popup">
-        <div class="popup-message">Welcome to Stackle! The rules are simple. Try to guess the words on each side of the cube. Each guess must be a valid 5-letter word. The color of the tiles will change to show how close your guess was to the word. You have 5 attempts per side. Good luck!</div>
-        <button id="start-button" class="popup-button">Start Game</button>
-    </div>
-
-    <div id="rules-popup" class="popup">
-        <div class="popup-message">Stackle Rules: Guess the 5-letter words on each side of the cube. The color of the tiles will indicate how close your guess was. You have 5 attempts per side. Good luck!</div>
-        <button id="close-rules-button" class="popup-button">Close</button>
-    </div>
-
-    <div id="logo">stackle</div>
-
-    <div id="help-icon">
-      <span>?</span>
-    </div>
-  
 </body>
 </html>

@@ -147,36 +147,87 @@ body {
 }
 
 .popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #333;
-  color: #fff;
-  padding: 20px 40px;
-  border-radius: 10px;
-  text-align: center;
-  display: none;
-  z-index: 2000;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #333;
+    color: #fff;
+    padding: 20px 40px;
+    border-radius: 10px;
+    text-align: left;
+    display: none;
+    z-index: 2000;
+    max-width: 90%;
+    width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.popup-message {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.popup-button {
-  background-color: #5ECF85;
-  color: #333;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 5px;
+.popup-header h2 {
+    font-size: 24px;
+    margin: 0;
 }
 
-.popup-button:hover {
-  background-color: #4caf50;
+.popup-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.popup-content p, .popup-content ul {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.popup-content ul {
+    padding-left: 20px;
+}
+
+.popup-content h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.examples {
+    font-size: 16px;
+}
+
+.example-tile {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    margin-right: 5px;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.example-tile.correct {
+    background-color: #5ECF85;
+}
+
+.example-tile.present {
+    background-color: #FFF9C4;
+    color: #333;
+}
+
+.example-tile.otherWord {
+    background-color: #D1A3FF;
+}
+
+.example-tile.absent {
+    background-color: #D3D3D3;
 }
 
 #logo {
@@ -191,7 +242,6 @@ body {
   transform: translateX(-50%);
   z-index: 1000;
 }
-
 
 #help-icon {
   position: fixed;
@@ -225,7 +275,6 @@ body {
   align-items: center;
   justify-content: center;
 }
-
 
 @keyframes wobble {
   0%, 100% {
