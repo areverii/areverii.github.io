@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dictionary api!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-right: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        .word-info {
+            margin-bottom: 20px;
+        }
+        .word-info h3 {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="api.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>dictionary api!</h1>
+        <input type="text" id="word_input" placeholder="enter a word to get info! yayy">
+        <button onclick="get_word_info()">get info</button>
+        <div id="result"></div>
+    </div>
+</body>
+</html>
