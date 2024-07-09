@@ -19,6 +19,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column; /* Added to handle column layout */
 }
 
 #wrapper {
@@ -306,80 +307,84 @@ body {
   }
 }
 
-.keyboard {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background-color: #333;
-  display: flex;
-  flex-direction: column;
-  padding: 10px 0;
-  z-index: 2000;
-  display: none;
-}
-
-.keyboard-row {
-  display: flex;
-  justify-content: center;
-  margin: 5px 0;
-}
-
-.keyboard-button {
-  background-color: #444;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  margin: 0 5px;
-  padding: 10px 15px;
-  cursor: pointer;
-}
-
-.keyboard-button:active {
-  background-color: #555;
-}
-
+/* Mobile Styles */
 @media (max-width: 768px) {
-  .popup {
-    padding: 20px;
-    max-width: 95%;
-    width: 90%;
-    font-size: 18px;
-  }
-  .popup-header h2 {
-    font-size: 22px;
-  }
-  .popup-content p, .popup-content ul {
-    font-size: 14px;
-  }
-  .popup-content h3 {
-    font-size: 16px;
-  }
-  .example-tile {
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
-  }
-  .keyboard {
-    display: flex;
-  }
-  .cube {
-    height: 200px;
-    width: 200px;
-  }
-  .cube > .side {
-    height: 200px;
-    width: 200px;
-  }
-  .cube > .side > .letter-box {
-    font-size: 18px;
-  }
-  #logo {
-    font-size: 36px;
-  }
-  #help-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 28px;
-  }
+    body {
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .popup {
+        max-width: 95%;
+        width: 90%;
+        padding: 20px;
+    }
+
+    .popup-header h2 {
+        font-size: 20px;
+    }
+
+    .popup-content p, .popup-content ul {
+        font-size: 14px;
+    }
+
+    .popup-content h3 {
+        font-size: 16px;
+    }
+
+    .examples {
+        font-size: 14px;
+    }
+
+    .example-tile {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+    }
+
+    #logo {
+        font-size: 36px;
+    }
+
+    #help-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }
+
+    #keyboard {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .keyboard-row {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 5px;
+    }
+
+    .key {
+        width: 10vw;
+        height: 10vw;
+        max-width: 50px;
+        max-height: 50px;
+        margin: 2px;
+        font-size: 24px;
+        background-color: #333;
+        color: #fff;
+        border: 1px solid #444;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 10vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .key.special-key {
+        background-color: #444;
+        color: #fff;
+    }
 }

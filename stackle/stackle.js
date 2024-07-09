@@ -14,6 +14,7 @@ const current_guesses = Array(4).fill(0);
 document.addEventListener('DOMContentLoaded', () => {
     init();
     animate();
+    setup_mobile_keyboard();
 });
 
 function init() {
@@ -21,7 +22,7 @@ function init() {
     const aspect = window.innerWidth / window.innerHeight;
     camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '50%';
@@ -45,7 +46,7 @@ function init() {
     document.getElementById('help-icon').addEventListener('click', show_rules_popup);
 
     window.addEventListener('resize', onWindowResize, false);
-    window.addEventListener('keydown', on_key_down, false);
+    window.addEventListener('keydown', on_key_down, false); 
 
     fetch('words.json')
         .then(response => response.json())
@@ -55,10 +56,6 @@ function init() {
             create_cube();
             show_welcome_popup();
         });
-
-    document.querySelectorAll('.keyboard-button').forEach(button => {
-        button.addEventListener('click', () => on_key_click(button.textContent));
-    });
 }
 
 function onWindowResize() {
@@ -167,29 +164,15 @@ function update_text_mesh(mesh, text) {
 }
 
 function on_key_down(event) {
-    if (window.innerWidth > 768) {
-        const current_face_index = get_current_face_index();
-        if (completed_faces[current_face_index]) return;
+    const current_face_index = get_current_face_index();
+    if (completed_faces[current_face_index]) return;
 
-        if (event.key >= 'a' && event.key <= 'z') {
-            place_letter(event.key.toUpperCase());
-        } else if (event.key === 'Backspace') {
-            remove_letter();
-        } else if (event.key === 'Enter') {
-            check_guess();
-        }
-    }
-}
-
-function on_key_click(key) {
-    if (window.innerWidth <= 768) {
-        if (key === 'ENTER') {
-            check_guess();
-        } else if (key === '←') {
-            remove_letter();
-        } else {
-            place_letter(key);
-        }
+    if (event.key >= 'a' && event.key <= 'z') {
+        place_letter(event.key.toUpperCase());
+    } else if (event.key === 'Backspace') {
+        remove_letter();
+    } else if (event.key === 'Enter') {
+        check_guess();
     }
 }
 
@@ -559,4 +542,21 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
+}
+
+function setup_mobile_keyboard() {
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(key => {
+        key.addEventListener('click', () => {
+            const letter = key.textContent;
+
+            if (letter === '⌫') {
+                remove_letter();
+            } else if (letter === '⏎') {
+                check_guess();
+            } else {
+                place_letter(letter);
+            }
+        });
+    });
 }
