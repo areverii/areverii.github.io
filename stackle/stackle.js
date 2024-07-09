@@ -83,7 +83,6 @@ function chooseWords(wordList) {
         }
     }
 }
-
 function createCube() {
     const faceTransforms = [
         { position: [0, 0, cubeSize / 2 - 0.5], rotation: [0, 0, 0] }, // front
@@ -132,12 +131,12 @@ function createTextMesh(text) {
     canvas.height = 256;
     const context = canvas.getContext('2d');
     context.font = '96px Arial';
-    context.fillStyle = 'black';
+    context.fillStyle = 'white'; // White text color
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(text, 128, 128);
     const texture = new THREE.CanvasTexture(canvas);
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0 });
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 1 });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
     mesh.userData = { text };
     return mesh;
@@ -147,7 +146,7 @@ function updateTextMesh(mesh, text) {
     const canvas = mesh.material.map.image;
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = 'black';
+    context.fillStyle = 'white'; // White text color
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(text, 128, 128);
@@ -176,8 +175,6 @@ function placeLetter(letter) {
         if (!guessPositions[currentFaceIndex][guessRow][j].filled) {
             const { text, box } = cube[currentFaceIndex][guessRow][j];
             updateTextMesh(text, letter);
-            box.material[4] = faceMaterials.solidWhite.clone(); // Only update the front face
-            box.material[4].opacity = 1; // Make the front face of the box visible
             guessPositions[currentFaceIndex][guessRow][j] = { filled: true, locked: false };
             updateSharedCorners(currentFaceIndex, guessRow, j, letter);
             updateSharedCornerVisibility(currentFaceIndex, guessRow, j, true); // Update visibility of the shared corner
@@ -193,7 +190,6 @@ function removeLetter() {
         if (guessPositions[currentFaceIndex][guessRow][j].filled && !guessPositions[currentFaceIndex][guessRow][j].locked) {
             const { text, box } = cube[currentFaceIndex][guessRow][j];
             updateTextMesh(text, "");
-            box.material[4].opacity = 0; // Make the front face of the box invisible
             guessPositions[currentFaceIndex][guessRow][j] = { filled: false, locked: false };
             updateSharedCorners(currentFaceIndex, guessRow, j, "");
             updateSharedCornerVisibility(currentFaceIndex, guessRow, j, false); // Update visibility of the shared corner
@@ -210,7 +206,6 @@ function updateSharedCorners(faceIndex, row, col, letter) {
         const { text, box } = cube[leftFaceIndex][leftFaceRow][leftFaceCol];
         updateTextMesh(text, letter);
         guessPositions[leftFaceIndex][leftFaceRow][leftFaceCol] = letter ? { filled: true, locked: true } : { filled: false, locked: false };
-        box.material[4].opacity = letter ? 1 : 0; // Update visibility of the shared corner
     } else if (col === 4) {
         const rightFaceIndex = (faceIndex + 1) % 4; // Face to the right
         const rightFaceRow = row;
@@ -218,7 +213,6 @@ function updateSharedCorners(faceIndex, row, col, letter) {
         const { text, box } = cube[rightFaceIndex][rightFaceRow][rightFaceCol];
         updateTextMesh(text, letter);
         guessPositions[rightFaceIndex][rightFaceRow][rightFaceCol] = letter ? { filled: true, locked: true } : { filled: false, locked: false };
-        box.material[4].opacity = letter ? 1 : 0; // Update visibility of the shared corner
     }
 }
 
@@ -228,13 +222,13 @@ function updateSharedCornerVisibility(faceIndex, row, col, visible) {
         const leftFaceRow = row;
         const leftFaceCol = 4;
         const { box } = cube[leftFaceIndex][leftFaceRow][leftFaceCol];
-        box.material[4].opacity = visible ? 1 : 0; // Update the front face visibility
+        box.visible = visible; // Update the front face visibility
     } else if (col === 4) {
         const rightFaceIndex = (faceIndex + 1) % 4; // Face to the right
         const rightFaceRow = row;
         const rightFaceCol = 0;
         const { box } = cube[rightFaceIndex][rightFaceRow][rightFaceCol];
-        box.material[4].opacity = visible ? 1 : 0; // Update the front face visibility
+        box.visible = visible; // Update the front face visibility
     }
 }
 
@@ -385,8 +379,10 @@ function getMaxGuessRow() {
 
 function updateBoxColor(faceIndex, i, j, status) {
     const { box } = cube[faceIndex][i][j];
-    box.material[4] = faceMaterials[status].clone(); // Only update the front face
+    box.material[4].color.set(faceMaterials[status].color); // Only update the front face
     box.material[4].opacity = 1; // Ensure the face is visible when updating color
+    box.material[4].transparent = true; // Ensure the face remains transparent
+    cube[faceIndex][i][j].text.material.opacity = 1; // Ensure the text is visible
 }
 
 function updateCornerBoxColor(faceIndex, row, col, status) {
@@ -395,15 +391,19 @@ function updateCornerBoxColor(faceIndex, row, col, status) {
         const leftFaceRow = row;
         const leftFaceCol = 4;
         const { box } = cube[leftFaceIndex][leftFaceRow][leftFaceCol];
-        box.material[4] = faceMaterials[status].clone(); // Only update the front face
+        box.material[4].color.set(faceMaterials[status].color); // Only update the front face
         box.material[4].opacity = 1; // Ensure the face is visible when updating color
+        box.material[4].transparent = true; // Ensure the face remains transparent
+        cube[leftFaceIndex][leftFaceRow][leftFaceCol].text.material.opacity = 1; // Ensure the text is visible
     } else if (col === 4) {
         const rightFaceIndex = (faceIndex + 1) % 4; // Face to the right
         const rightFaceRow = row;
         const rightFaceCol = 0;
         const { box } = cube[rightFaceIndex][rightFaceRow][rightFaceCol];
-        box.material[4] = faceMaterials[status].clone(); // Only update the front face
+        box.material[4].color.set(faceMaterials[status].color); // Only update the front face
         box.material[4].opacity = 1; // Ensure the face is visible when updating color
+        box.material[4].transparent = true; // Ensure the face remains transparent
+        cube[rightFaceIndex][rightFaceRow][rightFaceCol].text.material.opacity = 1; // Ensure the text is visible
     }
 }
 

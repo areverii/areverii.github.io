@@ -57,13 +57,26 @@ body {
   align-items: center;
   font-size: 24px;
   color: #fff;
-  border: 2px solid transparent; /* Hollow square style */
+  border: 2px solid #fff; /* Hollow square style */
+  background-color: transparent; /* Ensure background is transparent */
   transform-style: preserve-3d;
   transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
 }
 
-.cube > .side > .letter-box.hollow {
-  border-color: #fff; /* Hollow square color */
+.cube > .side > .letter-box.correct {
+  border-color: #5ECF85; /* Correct letter */
+}
+
+.cube > .side > .letter-box.present {
+  border-color: #FFF9C4; /* Present letter */
+}
+
+.cube > .side > .letter-box.absent {
+  border-color: #D3D3D3; /* Absent letter */
+}
+
+.cube > .side > .letter-box.otherWord {
+  border-color: #D1A3FF; /* Letter in another word */
 }
 
 #side-front {
@@ -96,7 +109,7 @@ body {
 
 #notification-container {
   position: fixed;
-  top: 20px;
+  bottom: 20px; /* Move to bottom */
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
