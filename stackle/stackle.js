@@ -23,10 +23,6 @@ function init() {
 
     renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = '50%';
-    renderer.domElement.style.left = '50%';
-    renderer.domElement.style.transform = 'translate(-50%, -50%)';
     document.body.appendChild(renderer.domElement);
 
     controls = new OrbitControls(camera, renderer.domElement);
