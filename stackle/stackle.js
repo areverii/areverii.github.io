@@ -96,12 +96,17 @@ function createCube() {
                 cube[faceIndex][i][j].text.position.set(j - 2, i - 2, 0.55); // Slightly offset text
                 cube[faceIndex][i][j].text.renderOrder = 1; // Ensure text is rendered above the box
                 faceGroup.add(cube[faceIndex][i][j].text);
+
+                if (i === 0) { // Initialize the first guess row with the absent_square sprite
+                    box.material.opacity = 1;
+                }
             }
         }
         scene.add(faceGroup);
         cube[faceIndex].group = faceGroup;
     });
 }
+
 
 function createBox() {
     const textureLoader = new THREE.TextureLoader();
@@ -111,6 +116,7 @@ function createBox() {
     const mesh = new THREE.Mesh(geometry, material);
     return mesh;
 }
+
 
 function createTextMesh(text) {
     const canvas = document.createElement('canvas');
@@ -162,7 +168,6 @@ function placeLetter(letter) {
         if (!guessPositions[currentFaceIndex][guessRow][j].filled) {
             const { text, box } = cube[currentFaceIndex][guessRow][j];
             updateTextMesh(text, letter);
-            box.material.opacity = 1; // Make the hollow square visible
             guessPositions[currentFaceIndex][guessRow][j] = { filled: true, locked: false };
             updateSharedCorners(currentFaceIndex, guessRow, j, letter);
             updateSharedCornerVisibility(currentFaceIndex, guessRow, j, true); // Update visibility of the shared corner
@@ -176,9 +181,8 @@ function removeLetter() {
     const guessRow = currentGuesses[currentFaceIndex];
     for (let j = gridSize - 1; j >= 0; j--) {
         if (guessPositions[currentFaceIndex][guessRow][j].filled && !guessPositions[currentFaceIndex][guessRow][j].locked) {
-            const { text, box } = cube[currentFaceIndex][guessRow][j];
+            const { text } = cube[currentFaceIndex][guessRow][j];
             updateTextMesh(text, "");
-            box.material.opacity = 0; // Make the hollow square invisible
             guessPositions[currentFaceIndex][guessRow][j] = { filled: false, locked: false };
             updateSharedCorners(currentFaceIndex, guessRow, j, "");
             updateSharedCornerVisibility(currentFaceIndex, guessRow, j, false); // Update visibility of the shared corner
@@ -186,6 +190,7 @@ function removeLetter() {
         }
     }
 }
+
 
 function updateSharedCorners(faceIndex, row, col, letter) {
     if (col === 0) {
@@ -311,11 +316,20 @@ async function checkGuess() {
         return;
     }
 
+    // Update the next guess row to show the absent_square sprite
+    if (currentGuesses[currentFaceIndex] < maxGuesses) {
+        const nextGuessRow = currentGuesses[currentFaceIndex];
+        for (let j = 0; j < gridSize; j++) {
+            cube[currentFaceIndex][nextGuessRow][j].box.material.opacity = 1;
+        }
+    }
+
     // Check if all faces have guessed for the current row before allowing progression to the next row
     if (allFacesGuessedForCurrentRow()) {
         incrementGuessRow();
     }
 }
+
 
 async function isValidWord(word) {
     try {
