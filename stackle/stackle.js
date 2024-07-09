@@ -11,15 +11,6 @@ const guessPositions = Array.from({ length: 4 }, () => Array.from({ length: grid
 const completedFaces = Array(4).fill(false); // Track completed faces
 const currentGuesses = Array(4).fill(0); // Track current guess row for each face
 
-const faceMaterials = {
-    default: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 }),
-    correct: new THREE.MeshBasicMaterial({ color: 0x5ECF85, transparent: true, opacity: 1 }),
-    present: new THREE.MeshBasicMaterial({ color: 0xFFF9C4, transparent: true, opacity: 1 }),
-    absent: new THREE.MeshBasicMaterial({ color: 0xD3D3D3, transparent: true, opacity: 1 }),
-    otherWord: new THREE.MeshBasicMaterial({ color: 0xD1A3FF, transparent: true, opacity: 1 }),
-    solidWhite: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 1 }) // For non-color changing faces
-};
-
 init();
 animate();
 
@@ -83,6 +74,7 @@ function chooseWords(wordList) {
         }
     }
 }
+
 function createCube() {
     const faceTransforms = [
         { position: [0, 0, cubeSize / 2 - 0.5], rotation: [0, 0, 0] }, // front
@@ -100,7 +92,7 @@ function createCube() {
                 const box = createBox();
                 box.position.set(j - 2, i - 2, 0);
                 faceGroup.add(box);
-                cube[faceIndex][i][j] = { box, text: createTextMesh("") };
+                cube[faceIndex][i][j] = { box, text: createTextMesh(""), status: 'default' };
                 cube[faceIndex][i][j].text.position.set(j - 2, i - 2, 0.55); // Slightly offset text
                 cube[faceIndex][i][j].text.renderOrder = 1; // Ensure text is rendered above the box
                 faceGroup.add(cube[faceIndex][i][j].text);
@@ -112,17 +104,12 @@ function createCube() {
 }
 
 function createBox() {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const materialArray = [
-        faceMaterials.default.clone(), // Right
-        faceMaterials.default.clone(), // Left
-        faceMaterials.default.clone(), // Top
-        faceMaterials.default.clone(), // Bottom
-        faceMaterials.default.clone(), // Front
-        faceMaterials.default.clone() // Back
-    ];
-
-    return new THREE.Mesh(geometry, materialArray);
+    const textureLoader = new THREE.TextureLoader();
+    const hollowSquareTexture = textureLoader.load('absent_square.png');
+    const geometry = new THREE.PlaneGeometry(1, 1);
+    const material = new THREE.MeshBasicMaterial({ map: hollowSquareTexture, transparent: true, opacity: 0 });
+    const mesh = new THREE.Mesh(geometry, material);
+    return mesh;
 }
 
 function createTextMesh(text) {
@@ -136,7 +123,7 @@ function createTextMesh(text) {
     context.textBaseline = 'middle';
     context.fillText(text, 128, 128);
     const texture = new THREE.CanvasTexture(canvas);
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 1 });
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
     mesh.userData = { text };
     return mesh;
@@ -175,6 +162,7 @@ function placeLetter(letter) {
         if (!guessPositions[currentFaceIndex][guessRow][j].filled) {
             const { text, box } = cube[currentFaceIndex][guessRow][j];
             updateTextMesh(text, letter);
+            box.material.opacity = 1; // Make the hollow square visible
             guessPositions[currentFaceIndex][guessRow][j] = { filled: true, locked: false };
             updateSharedCorners(currentFaceIndex, guessRow, j, letter);
             updateSharedCornerVisibility(currentFaceIndex, guessRow, j, true); // Update visibility of the shared corner
@@ -190,6 +178,7 @@ function removeLetter() {
         if (guessPositions[currentFaceIndex][guessRow][j].filled && !guessPositions[currentFaceIndex][guessRow][j].locked) {
             const { text, box } = cube[currentFaceIndex][guessRow][j];
             updateTextMesh(text, "");
+            box.material.opacity = 0; // Make the hollow square invisible
             guessPositions[currentFaceIndex][guessRow][j] = { filled: false, locked: false };
             updateSharedCorners(currentFaceIndex, guessRow, j, "");
             updateSharedCornerVisibility(currentFaceIndex, guessRow, j, false); // Update visibility of the shared corner
@@ -222,13 +211,13 @@ function updateSharedCornerVisibility(faceIndex, row, col, visible) {
         const leftFaceRow = row;
         const leftFaceCol = 4;
         const { box } = cube[leftFaceIndex][leftFaceRow][leftFaceCol];
-        box.visible = visible; // Update the front face visibility
+        box.material.opacity = visible ? 1 : 0; // Update the hollow square visibility
     } else if (col === 4) {
         const rightFaceIndex = (faceIndex + 1) % 4; // Face to the right
         const rightFaceRow = row;
         const rightFaceCol = 0;
         const { box } = cube[rightFaceIndex][rightFaceRow][rightFaceCol];
-        box.visible = visible; // Update the front face visibility
+        box.material.opacity = visible ? 1 : 0; // Update the hollow square visibility
     }
 }
 
@@ -263,6 +252,7 @@ async function checkGuess() {
         if (letter.toLowerCase() === word[j]) {
             updateBoxColor(currentFaceIndex, guessRow, j, 'correct');
             updateCornerBoxColor(currentFaceIndex, guessRow, j, 'correct');
+            cube[currentFaceIndex][guessRow][j].status = 'correct';
             wordCounts[letter.toLowerCase()]--;
             guessCounts[letter.toLowerCase()]--;
         }
@@ -275,22 +265,25 @@ async function checkGuess() {
             if (wordCounts[letter.toLowerCase()] > 0) {
                 updateBoxColor(currentFaceIndex, guessRow, j, 'present');
                 updateCornerBoxColor(currentFaceIndex, guessRow, j, 'present');
+                cube[currentFaceIndex][guessRow][j].status = 'present';
                 wordCounts[letter.toLowerCase()]--;
             } else {
                 updateBoxColor(currentFaceIndex, guessRow, j, 'absent');
                 updateCornerBoxColor(currentFaceIndex, guessRow, j, 'absent');
+                cube[currentFaceIndex][guessRow][j].status = 'absent';
             }
         }
     }
 
     // Check for letters in other words
     for (let j = 0; j < gridSize; j++) {
-        if (cube[currentFaceIndex][guessRow][j].box.material[4].color.equals(faceMaterials.absent.color)) {
+        if (cube[currentFaceIndex][guessRow][j].status === 'absent') {
             const letter = guess[j];
             for (let k = 0; k < 4; k++) {
                 if (k !== currentFaceIndex && words[k].includes(letter.toLowerCase())) {
                     updateBoxColor(currentFaceIndex, guessRow, j, 'otherWord');
                     updateCornerBoxColor(currentFaceIndex, guessRow, j, 'otherWord');
+                    cube[currentFaceIndex][guessRow][j].status = 'otherWord';
                     break;
                 }
             }
@@ -379,10 +372,9 @@ function getMaxGuessRow() {
 
 function updateBoxColor(faceIndex, i, j, status) {
     const { box } = cube[faceIndex][i][j];
-    box.material[4].color.set(faceMaterials[status].color); // Only update the front face
-    box.material[4].opacity = 1; // Ensure the face is visible when updating color
-    box.material[4].transparent = true; // Ensure the face remains transparent
-    cube[faceIndex][i][j].text.material.opacity = 1; // Ensure the text is visible
+    console.log("updating box color", faceIndex, i, j, status); // Debugging
+    box.material.map = new THREE.TextureLoader().load(`${status}_square.png`); // Load the appropriate colored square image
+    box.material.opacity = 1; // Ensure the hollow square is visible
 }
 
 function updateCornerBoxColor(faceIndex, row, col, status) {
@@ -391,19 +383,15 @@ function updateCornerBoxColor(faceIndex, row, col, status) {
         const leftFaceRow = row;
         const leftFaceCol = 4;
         const { box } = cube[leftFaceIndex][leftFaceRow][leftFaceCol];
-        box.material[4].color.set(faceMaterials[status].color); // Only update the front face
-        box.material[4].opacity = 1; // Ensure the face is visible when updating color
-        box.material[4].transparent = true; // Ensure the face remains transparent
-        cube[leftFaceIndex][leftFaceRow][leftFaceCol].text.material.opacity = 1; // Ensure the text is visible
+        box.material.map = new THREE.TextureLoader().load(`${status}_square.png`); // Load the appropriate colored square image
+        box.material.opacity = 1; // Ensure the hollow square is visible
     } else if (col === 4) {
         const rightFaceIndex = (faceIndex + 1) % 4; // Face to the right
         const rightFaceRow = row;
         const rightFaceCol = 0;
         const { box } = cube[rightFaceIndex][rightFaceRow][rightFaceCol];
-        box.material[4].color.set(faceMaterials[status].color); // Only update the front face
-        box.material[4].opacity = 1; // Ensure the face is visible when updating color
-        box.material[4].transparent = true; // Ensure the face remains transparent
-        cube[rightFaceIndex][rightFaceRow][rightFaceCol].text.material.opacity = 1; // Ensure the text is visible
+        box.material.map = new THREE.TextureLoader().load(`${status}_square.png`); // Load the appropriate colored square image
+        box.material.opacity = 1; // Ensure the hollow square is visible
     }
 }
 
@@ -491,8 +479,8 @@ function restartGame() {
             for (let k = 0; k < gridSize; k++) {
                 const { text, box } = cube[i][j][k];
                 updateTextMesh(text, "");
-                box.material[4] = faceMaterials.default.clone(); // Reset the front face
-                box.material[4].opacity = 0; // Make the front face of the box invisible
+                box.material.map = null; // Reset the hollow square
+                box.material.opacity = 0; // Make the hollow square invisible
                 guessPositions[i][j][k] = { filled: false, locked: false };
             }
         }
