@@ -2,14 +2,14 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 let scene, camera, renderer, controls;
-let words = ["STACK", "KITES", "SOURS", "SPURS"]; 
+let words = ["STACK", "KITES", "SOURS", "SPURS"];
 const grid_size = 5;
 const max_guesses = 5;
 const cube_size = 5;
-const cube = Array.from({ length: 4 }, () => Array.from({ length: grid_size }, () => Array(grid_size).fill(null))); 
-const guess_positions = Array.from({ length: 4 }, () => Array.from({ length: grid_size }, () => Array(grid_size).fill({ filled: false, locked: false }))); 
-const completed_faces = Array(4).fill(false); 
-const current_guesses = Array(4).fill(0); 
+const cube = Array.from({ length: 4 }, () => Array.from({ length: grid_size }, () => Array(grid_size).fill(null)));
+const guess_positions = Array.from({ length: 4 }, () => Array.from({ length: grid_size }, () => Array(grid_size).fill({ filled: false, locked: false })));
+const completed_faces = Array(4).fill(false);
+const current_guesses = Array(4).fill(0);
 
 document.addEventListener('DOMContentLoaded', () => {
     init();
@@ -21,8 +21,12 @@ function init() {
     const aspect = window.innerWidth / window.innerHeight;
     camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
 
-    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = '50%';
+    renderer.domElement.style.left = '50%';
+    renderer.domElement.style.transform = 'translate(-50%, -50%)';
     document.body.appendChild(renderer.domElement);
 
     controls = new OrbitControls(camera, renderer.domElement);
@@ -41,7 +45,7 @@ function init() {
     document.getElementById('help-icon').addEventListener('click', show_rules_popup);
 
     window.addEventListener('resize', onWindowResize, false);
-    window.addEventListener('keydown', on_key_down, false); // Ensure keydown event is set up correctly
+    window.addEventListener('keydown', on_key_down, false);
 
     fetch('words.json')
         .then(response => response.json())
@@ -51,6 +55,10 @@ function init() {
             create_cube();
             show_welcome_popup();
         });
+
+    document.querySelectorAll('.keyboard-button').forEach(button => {
+        button.addEventListener('click', () => on_key_click(button.textContent));
+    });
 }
 
 function onWindowResize() {
@@ -90,10 +98,10 @@ const choose_words = (word_list) => {
 
 function create_cube() {
     const face_transforms = [
-        { position: [0, 0, cube_size / 2 - 0.5], rotation: [0, 0, 0] }, 
-        { position: [cube_size / 2 - 0.5, 0, 0], rotation: [0, Math.PI / 2, 0] }, 
-        { position: [0, 0, -cube_size / 2 + 0.5], rotation: [0, Math.PI, 0] }, 
-        { position: [-cube_size / 2 + 0.5, 0, 0], rotation: [0, -Math.PI / 2, 0] } 
+        { position: [0, 0, cube_size / 2 - 0.5], rotation: [0, 0, 0] },
+        { position: [cube_size / 2 - 0.5, 0, 0], rotation: [0, Math.PI / 2, 0] },
+        { position: [0, 0, -cube_size / 2 + 0.5], rotation: [0, Math.PI, 0] },
+        { position: [-cube_size / 2 + 0.5, 0, 0], rotation: [0, -Math.PI / 2, 0] }
     ];
 
     ['front', 'right', 'back', 'left'].forEach((face, face_index) => {
@@ -106,11 +114,11 @@ function create_cube() {
                 box.position.set(j - 2, i - 2, 0);
                 face_group.add(box);
                 cube[face_index][i][j] = { box, text: create_text_mesh(""), status: 'default' };
-                cube[face_index][i][j].text.position.set(j - 2, i - 2, 0.55); 
-                cube[face_index][i][j].text.renderOrder = 1; 
+                cube[face_index][i][j].text.position.set(j - 2, i - 2, 0.55);
+                cube[face_index][i][j].text.renderOrder = 1;
                 face_group.add(cube[face_index][i][j].text);
 
-                if (i === 0) { 
+                if (i === 0) {
                     box.material.opacity = 1;
                 }
             }
@@ -134,7 +142,7 @@ function create_text_mesh(text) {
     canvas.height = 256;
     const context = canvas.getContext('2d');
     context.font = '96px Arial';
-    context.fillStyle = 'white'; 
+    context.fillStyle = 'white';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(text, 128, 128);
@@ -159,15 +167,29 @@ function update_text_mesh(mesh, text) {
 }
 
 function on_key_down(event) {
-    const current_face_index = get_current_face_index();
-    if (completed_faces[current_face_index]) return;
+    if (window.innerWidth > 768) {
+        const current_face_index = get_current_face_index();
+        if (completed_faces[current_face_index]) return;
 
-    if (event.key >= 'a' && event.key <= 'z') {
-        place_letter(event.key.toUpperCase());
-    } else if (event.key === 'Backspace') {
-        remove_letter();
-    } else if (event.key === 'Enter') {
-        check_guess();
+        if (event.key >= 'a' && event.key <= 'z') {
+            place_letter(event.key.toUpperCase());
+        } else if (event.key === 'Backspace') {
+            remove_letter();
+        } else if (event.key === 'Enter') {
+            check_guess();
+        }
+    }
+}
+
+function on_key_click(key) {
+    if (window.innerWidth <= 768) {
+        if (key === 'ENTER') {
+            check_guess();
+        } else if (key === '←') {
+            remove_letter();
+        } else {
+            place_letter(key);
+        }
     }
 }
 
@@ -335,7 +357,7 @@ async function is_valid_word(word) {
     try {
         const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
         const data = await response.json();
-        return !data.title; 
+        return !data.title;
     } catch (error) {
         console.error('Error validating word:', error);
         return false;
