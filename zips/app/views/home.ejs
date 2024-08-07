@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>search zip codes</title>
+    <style>
+        body {
+            font-family: 'Helvetica', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        input, button {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #b7aae5;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: rgb(101, 100, 162);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>search zip codes</h1>
+        <form action="/process" method="POST">
+            <input type="text" name="query" placeholder="enter place or zip code" required>
+            <button type="submit">search</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>we found:</title>
+    <style>
+        body {
+            font-family: 'Helvetica', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 0.5rem;
+            background-color: #e9e9e9;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        a {
+            display: block;
+            margin-top: 1rem;
+            text-align: center;
+            color: #b7aae5;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>search result</h1>
+        <% if (result) { %>
+            <% if (isNaN(query[0])) { %>
+                <p><%= query %> is associated with these zip codes:</p>
+                <ul>
+                    <% result.zips.forEach(zip => { %>
+                        <li><%= zip %></li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>zip code <%= query %> is associated with the place: <%= result.place %></p>
+            <% } %>
+        <% } else { %>
+            <p>No results found for <%= query %></p>
+        <% } %>
+        <a href="/">back to home!</a>
+    </div>
+</body>
+</html>
